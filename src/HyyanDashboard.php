@@ -16,17 +16,25 @@
 class HyyanDashboard {
 
     public function __construct() {
+        $this->__init();
+    }
+
+    public function __init() {
         add_filter('admin_title', array($this, 'replaceTitle'), 10, 2);
-        add_action('admin_head', array($this, 'wordpressHead'));
+        add_action('admin_head', array($this, '__head__'));
         remove_action('welcome_panel', 'wp_welcome_panel');
         add_action('welcome_panel', array($this, 'replaceWelcomePanelContent'));
         add_action('wp_dashboard_setup', array($this, 'removeMetaboxex'));
+        add_filter('update_footer', array($this, 'replaceVersion'), 11);
+        add_filter('the_generator', array($this, 'replaceVersion'));
+        add_filter('style_loader_src', array($this, 'replaceVersionOnlinks'), 9999);
+        add_filter('script_loader_src', array($this, 'replaceVersionOnlinks'), 9999);
     }
 
     /**
      * Execute action on wordpress head
      */
-    public function wordpressHead() {
+    public function __head__() {
         $options = $this->getOptions();
         $this->replaceHeading($options);
         $this->disableThemeSwitch($options);
@@ -111,6 +119,34 @@ class HyyanDashboard {
     }
 
     /**
+     * Replace the wordpress version on dashboard and feeds
+     * 
+     * @return string
+     */
+    public function replaceVersion() {
+        $options = $this->getOptions();
+        return $options['version'];
+    }
+
+    /**
+     * Replace the wordpress version in the css and js links
+     * 
+     * @param string $src url
+     * @return string
+     */
+    public function replaceVersionOnlinks($src) {
+
+        if (strpos($src, 'ver=')) {
+            $options = $this->getOptions();
+            $src = remove_query_arg('ver', $src);
+            if ($options['version'])
+                $src = add_query_arg(array('ver' => $options['version']), $src);
+        }
+
+        return $src;
+    }
+
+    /**
      * Get options
      * 
      * @return array
@@ -136,6 +172,7 @@ class HyyanDashboard {
             ),
             // diable the ability to switch themes 
             'disable-theme-switch' => true,
+            'version' => ''
         );
         return apply_filters('Hyyan\Dashboard.options', $default);
     }
