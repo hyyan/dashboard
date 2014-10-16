@@ -38,6 +38,7 @@ class HyyanDashboard {
         add_filter('style_loader_src', array($this, 'replaceVersionOnlinks'), 9999);
         add_filter('script_loader_src', array($this, 'replaceVersionOnlinks'), 9999);
         add_filter('admin_footer_text', array($this, 'replaceCopyright'));
+        add_action('wp_before_admin_bar_render',array($this, 'removeAdminbarMenus'));
     }
 
     /**
@@ -168,6 +169,23 @@ class HyyanDashboard {
     }
 
     /**
+     * Remove items from wordpress adminbar
+     * 
+     * @global WP_Admin_Bar $wp_admin_bar
+     */
+    public function removeAdminbarMenus() {
+        global $wp_admin_bar;
+        $options = $this->getOptions();
+
+        if (!($items = $options['remove-adminbar-menus']))
+            return;
+
+        foreach ($items as $item) {
+            $wp_admin_bar->remove_menu($item);
+        }
+    }
+
+    /**
      * Get options
      * 
      * @return array
@@ -196,7 +214,17 @@ class HyyanDashboard {
             // replace wordpress version
             'version' => '',
             // replace wordpress copyright
-            'copyright' => ''
+            'copyright' => '',
+            // adminbar menus to remove
+            'remove-adminbar-menus' => array(
+                'wp-logo',
+                'about',
+                'wporg',
+                'documentation',
+                'support-forums',
+                'feedback',
+                'updates'
+            )
         );
         return apply_filters('Hyyan\Dashboard.options', $default);
     }
