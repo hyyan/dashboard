@@ -51,6 +51,11 @@ class HyyanDashboard {
         }
     }
 
+    /**
+     * Replace the welcome panel content
+     * 
+     * @return boolean false if options or the file does not exist
+     */
     public function replaceWelcomePanelContent() {
         $options = $this->getOptions();
 
