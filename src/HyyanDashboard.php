@@ -248,6 +248,7 @@ class HyyanDashboard {
                 'support-forums',
                 'feedback',
                 'updates',
+                'themes'
             ),
             // menu pages to remove
             'remove-menus' => array()
