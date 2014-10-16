@@ -12,3 +12,10 @@
  * Text Domain: dashboard
  * License: MIT License
  */
+
+require_once __DIR__ . '/src/HyyanDashboard.php';
+
+/**
+ * Bootstrap the plugin
+ */
+new HyyanDashboard();
