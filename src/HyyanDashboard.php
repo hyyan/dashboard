@@ -17,11 +17,19 @@ class HyyanDashboard {
 
     public function __construct() {
         add_filter('admin_title', array($this, 'replaceTitle'), 10, 2);
-        add_action('admin_head', array($this, 'replaceHeading'));
+        add_action('admin_head', array($this, 'wordpressHead'));
         remove_action('welcome_panel', 'wp_welcome_panel');
         add_action('welcome_panel', array($this, 'replaceWelcomePanelContent'));
         add_action('wp_dashboard_setup', array($this, 'removeMetaboxex'));
-        add_action('admin_init', array($this, 'disableThemeSwitch'));
+    }
+
+    /**
+     * Execute action on wordpress head
+     */
+    public function wordpressHead() {
+        $options = $this->getOptions();
+        $this->replaceHeading($options);
+        $this->disableThemeSwitch($options);
     }
 
     /**
@@ -32,25 +40,6 @@ class HyyanDashboard {
     public function replaceTitle($admin_title) {
         $options = $this->getOptions();
         return $options['title'];
-    }
-
-    /**
-     * Print the new dashboard heading
-     * 
-     * @global object $current_screen
-     */
-    public function replaceHeading() {
-        $options = $this->getOptions();
-        global $current_screen;
-        if (isset($current_screen) && ($current_screen->id == 'dashboard' )) {
-            echo '<style type="text/css">#wpbody-content .wrap h2 { visibility: hidden; }</style>
-                        <script type="text/javascript">
-                                jQuery(document).ready(function($) {
-                                        $("#wpbody-content .wrap h2:eq(0)").html("' . $options['heading'] . '");
-                                        $("#wpbody-content .wrap h2").css("visibility","visible");
-                                });
-                        </script>';
-        }
     }
 
     /**
@@ -122,31 +111,6 @@ class HyyanDashboard {
     }
 
     /**
-     * Disable theme switching 
-     * 
-     * @global array $submenu
-     */
-    public function disableThemeSwitch() {
-        $options = $this->getOptions();
-
-        if (!$options['disable-theme-switch'])
-            return;
-
-        global $submenu;
-        unset($submenu['themes.php'][5]);
-        unset($submenu['themes.php'][16]);
-        add_action('admin_head', function() {
-            echo '
-                <style type="text/css">
-                    #dashboard_right_now #wp-version-message,
-                    #welcome-panel p.hide-if-no-customize {
-                        display: none;
-                    }
-              </style>';
-        });
-    }
-
-    /**
      * Get options
      * 
      * @return array
@@ -174,6 +138,46 @@ class HyyanDashboard {
             'disable-theme-switch' => true,
         );
         return apply_filters('Hyyan\Dashboard.options', $default);
+    }
+
+    /**
+     * Print the new dashboard heading
+     * 
+     * @global object $current_screen
+     * @param array $options
+     */
+    protected function replaceHeading($options) {
+        global $current_screen;
+        if (isset($current_screen) && ($current_screen->id == 'dashboard' )) {
+            echo '<style type="text/css">#wpbody-content .wrap h2 { visibility: hidden; }</style>
+                    <script type="text/javascript">
+                        jQuery(document).ready(function($) {
+                            $("#wpbody-content .wrap h2:eq(0)").html("' . $options['heading'] . '");
+                            $("#wpbody-content .wrap h2").css("visibility","visible");
+                        });
+                    </script>';
+        }
+    }
+
+    /**
+     * Disable theme switching 
+     * 
+     * @global array $submenu
+     * @param array $options
+     */
+    protected function disableThemeSwitch($options) {
+        if (!$options['disable-theme-switch'])
+            return;
+
+        global $submenu;
+        unset($submenu['themes.php'][5]);
+        unset($submenu['themes.php'][16]);
+        echo '<style type="text/css">
+                    #dashboard_right_now #wp-version-message,
+                    #welcome-panel p.hide-if-no-customize {
+                        display: none;
+                    }
+              </style>';
     }
 
 }
