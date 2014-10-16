@@ -20,6 +20,7 @@ class HyyanDashboard {
         add_action('admin_head', array($this, 'replaceHeading'));
         remove_action('welcome_panel', 'wp_welcome_panel');
         add_action('welcome_panel', array($this, 'replaceWelcomePanelContent'));
+        add_action('wp_dashboard_setup', array($this, 'removeMetaboxex'));
     }
 
     /**
@@ -75,6 +76,44 @@ class HyyanDashboard {
     }
 
     /**
+     * Remove default dashboard metaboxes
+     * 
+     * @global array $wp_meta_boxes
+     * @return false if the option is disables
+     */
+    public function removeMetaboxex() {
+
+        global $wp_meta_boxes;
+        $options = $this->getOptions();
+
+        if (!$options['remove-metaboxes'])
+            return false;
+
+        $options = $options['remove-metaboxes'];
+
+        if (true == $options['dashboard_plugins'])
+            unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_plugins']);
+
+        if (true == $options['dashboard_primary'])
+            unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_primary']);
+
+        if (true == $options['dashboard_secondary'])
+            unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_secondary']);
+
+        if (true == $options['dashboard_incoming_links'])
+            unset($wp_meta_boxes['dashboard']['normal']['core']['dashboard_incoming_links']);
+
+        if (true == $options['dashboard_quick_press'])
+            unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_quick_press']);
+
+        if (true == $options['dashboard_recent_drafts'])
+            unset($wp_meta_boxes['dashboard']['side']['core']['dashboard_recent_drafts']);
+
+        if (true == $options['custom_help_widget'])
+            unset($wp_meta_boxes['dashboard']['normal']['core']['custom_help_widget']);
+    }
+
+    /**
      * Get options
      * 
      * @return array
@@ -86,7 +125,17 @@ class HyyanDashboard {
             // dashboard heading
             'heading' => __('Dashboard'),
             // welcome panel file
-            'welcome-panel' => '/welcome-panel.php'
+            'welcome-panel' => '/welcome-panel.php',
+            // array of dashboardd metaboxes to remove
+            'remove-metaboxes' => array(
+                'dashboard_plugins' => true,
+                'dashboard_primary' => true,
+                'dashboard_secondary' => true,
+                'dashboard_incoming_links' => true,
+                'dashboard_quick_press' => false,
+                'dashboard_recent_drafts' => false,
+                'custom_help_widget' => false,
+            )
         );
         return apply_filters('Hyyan\Dashboard.options', $default);
     }
