@@ -111,6 +111,13 @@ class HyyanDashboard {
 
         if (true == $options['custom_help_widget'])
             unset($wp_meta_boxes['dashboard']['normal']['core']['custom_help_widget']);
+
+        $user_id = get_current_user_id();
+        if (true == $options['welcome_panel']) {
+            update_user_meta($user_id, 'show_welcome_panel', 0);
+        } else {
+            update_user_meta($user_id, 'show_welcome_panel', 1);
+        }
     }
 
     /**
@@ -135,6 +142,7 @@ class HyyanDashboard {
                 'dashboard_quick_press' => false,
                 'dashboard_recent_drafts' => false,
                 'custom_help_widget' => false,
+                'welcome_panel' => false,
             )
         );
         return apply_filters('Hyyan\Dashboard.options', $default);
