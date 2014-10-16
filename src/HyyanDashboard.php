@@ -18,6 +18,8 @@ class HyyanDashboard {
     public function __construct() {
         add_filter('admin_title', array($this, 'replaceTitle'), 10, 2);
         add_action('admin_head', array($this, 'replaceHeading'));
+        remove_action('welcome_panel', 'wp_welcome_panel');
+        add_action('welcome_panel', array($this, 'replaceWelcomePanelContent'));
     }
 
     /**
@@ -49,6 +51,24 @@ class HyyanDashboard {
         }
     }
 
+    public function replaceWelcomePanelContent() {
+        $options = $this->getOptions();
+
+        if (!$options['welcome-panel']) {
+            wp_welcome_panel();
+            return false;
+        }
+
+        if (!file_exists($file = get_template_directory() . $options['welcome-panel'])) {
+            printf('<pre>Welcome panel file "%s" does not exis</pre>', $file);
+            wp_welcome_panel();
+            return false;
+        }
+        ob_start();
+        include($file );
+        echo ob_get_clean();
+    }
+
     /**
      * Get options
      * 
@@ -60,6 +80,8 @@ class HyyanDashboard {
             'title' => __('Dashboard'),
             // dashboard heading
             'heading' => __('Dashboard'),
+            // welcome panel file
+            'welcome-panel' => '/welcome-panel.php'
         );
         return apply_filters('Hyyan\Dashboard.options', $default);
     }
