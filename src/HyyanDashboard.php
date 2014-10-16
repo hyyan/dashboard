@@ -15,10 +15,18 @@
  */
 class HyyanDashboard {
 
+    /**
+     * Cosntrcut the plugin
+     */
     public function __construct() {
         $this->__init();
     }
 
+    /**
+     * Admin init hook
+     * 
+     * Execute action on wordpress admin init hook
+     */
     public function __init() {
         add_filter('admin_title', array($this, 'replaceTitle'), 10, 2);
         add_action('admin_head', array($this, '__head__'));
@@ -33,7 +41,9 @@ class HyyanDashboard {
     }
 
     /**
-     * Execute action on wordpress head
+     * Admin head hook
+     * 
+     * Execute action on wordpress admin head hook
      */
     public function __head__() {
         $options = $this->getOptions();
@@ -183,8 +193,9 @@ class HyyanDashboard {
             ),
             // diable the ability to switch themes 
             'disable-theme-switch' => true,
+            // replace wordpress version
             'version' => '',
-            // wordpress copyright
+            // replace wordpress copyright
             'copyright' => ''
         );
         return apply_filters('Hyyan\Dashboard.options', $default);
