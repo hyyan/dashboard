@@ -186,6 +186,9 @@ class HyyanDashboard {
         }
     }
 
+    /**
+     * Remove wordpress menu pages
+     */
     public function removeMenuPages() {
         $options = $this->getOptions();
         if (!($menus = $options['remove-menus']))
