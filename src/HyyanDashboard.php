@@ -38,7 +38,8 @@ class HyyanDashboard {
         add_filter('style_loader_src', array($this, 'replaceVersionOnlinks'), 9999);
         add_filter('script_loader_src', array($this, 'replaceVersionOnlinks'), 9999);
         add_filter('admin_footer_text', array($this, 'replaceCopyright'));
-        add_action('wp_before_admin_bar_render',array($this, 'removeAdminbarMenus'));
+        add_action('wp_before_admin_bar_render', array($this, 'removeAdminbarMenus'));
+        add_action('admin_menu', array($this, 'removeMenuPages'), 999);
     }
 
     /**
@@ -185,6 +186,26 @@ class HyyanDashboard {
         }
     }
 
+    public function removeMenuPages() {
+        $options = $this->getOptions();
+        if (!($menus = $options['remove-menus']))
+            return;
+
+        foreach ($menus as $menu => $submenu) {
+
+            if (!is_array($submenu))
+                continue;
+
+            if (!empty($submenu)) {
+                foreach ($submenu as $item) {
+                    remove_submenu_page($menu, $item);
+                }
+            } else {
+                remove_menu_page($menu);
+            }
+        }
+    }
+
     /**
      * Get options
      * 
@@ -223,8 +244,10 @@ class HyyanDashboard {
                 'documentation',
                 'support-forums',
                 'feedback',
-                'updates'
-            )
+                'updates',
+            ),
+            // menu pages to remove
+            'remove-menus' => array()
         );
         return apply_filters('Hyyan\Dashboard.options', $default);
     }
