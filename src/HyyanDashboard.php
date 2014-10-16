@@ -29,6 +29,7 @@ class HyyanDashboard {
         add_filter('the_generator', array($this, 'replaceVersion'));
         add_filter('style_loader_src', array($this, 'replaceVersionOnlinks'), 9999);
         add_filter('script_loader_src', array($this, 'replaceVersionOnlinks'), 9999);
+        add_filter('admin_footer_text', array($this, 'replaceCopyright'));
     }
 
     /**
@@ -147,6 +148,16 @@ class HyyanDashboard {
     }
 
     /**
+     * Replace copyright string
+     * 
+     * @return string
+     */
+    public function replaceCopyright() {
+        $options = $this->getOptions();
+        return $options['copyright'];
+    }
+
+    /**
      * Get options
      * 
      * @return array
@@ -172,7 +183,9 @@ class HyyanDashboard {
             ),
             // diable the ability to switch themes 
             'disable-theme-switch' => true,
-            'version' => ''
+            'version' => '',
+            // wordpress copyright
+            'copyright' => ''
         );
         return apply_filters('Hyyan\Dashboard.options', $default);
     }
