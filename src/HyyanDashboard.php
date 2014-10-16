@@ -21,6 +21,7 @@ class HyyanDashboard {
         remove_action('welcome_panel', 'wp_welcome_panel');
         add_action('welcome_panel', array($this, 'replaceWelcomePanelContent'));
         add_action('wp_dashboard_setup', array($this, 'removeMetaboxex'));
+        add_action('admin_init', array($this, 'disableThemeSwitch'));
     }
 
     /**
@@ -121,6 +122,31 @@ class HyyanDashboard {
     }
 
     /**
+     * Disable theme switching 
+     * 
+     * @global array $submenu
+     */
+    public function disableThemeSwitch() {
+        $options = $this->getOptions();
+
+        if (!$options['disable-theme-switch'])
+            return;
+
+        global $submenu;
+        unset($submenu['themes.php'][5]);
+        unset($submenu['themes.php'][16]);
+        add_action('admin_head', function() {
+            echo '
+                <style type="text/css">
+                    #dashboard_right_now #wp-version-message,
+                    #welcome-panel p.hide-if-no-customize {
+                        display: none;
+                    }
+              </style>';
+        });
+    }
+
+    /**
      * Get options
      * 
      * @return array
@@ -143,7 +169,9 @@ class HyyanDashboard {
                 'dashboard_recent_drafts' => false,
                 'custom_help_widget' => false,
                 'welcome_panel' => false,
-            )
+            ),
+            // diable the ability to switch themes 
+            'disable-theme-switch' => true,
         );
         return apply_filters('Hyyan\Dashboard.options', $default);
     }
