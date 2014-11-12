@@ -12,7 +12,7 @@ Wordpress plugin to let themes customize the dashboard in their own way
 1. Changing Dashboard Title
 2. Changing Dashboard Heading
 3. Changing Welcome Panel Content Or Disable it 
-4. Changing version (dashboard,feeds,links)
+4. Changing version 
 5. Changing Copyright 
 6. Removing selected dashboard metaboxes (default ones only)
 7. Removing adminbar menus

@@ -34,7 +34,7 @@ class HyyanDashboard {
         add_action('welcome_panel', array($this, 'replaceWelcomePanelContent'));
         add_action('wp_dashboard_setup', array($this, 'removeMetaboxex'));
         add_filter('update_footer', array($this, 'replaceVersion'), 11);
-        add_filter('the_generator', array($this, 'replaceVersion'));
+        add_filter('the_generator', '__return_empty_string');
         add_filter('style_loader_src', array($this, 'replaceVersionOnlinks'), 9999);
         add_filter('script_loader_src', array($this, 'replaceVersionOnlinks'), 9999);
         add_filter('admin_footer_text', array($this, 'replaceCopyright'));
