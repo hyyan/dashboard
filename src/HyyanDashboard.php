@@ -76,7 +76,7 @@ class HyyanDashboard {
             return false;
         }
 
-        if (!file_exists($file = get_template_directory() . $options['welcome-panel'])) {
+        if (!file_exists($file = $options['welcome-panel'])) {
             printf('<pre>Welcome panel file "%s" does not exis</pre>', $file);
             wp_welcome_panel();
             return false;
@@ -127,7 +127,9 @@ class HyyanDashboard {
         if (true == $options['welcome_panel']) {
             update_user_meta($user_id, 'show_welcome_panel', 0);
         } else {
-            update_user_meta($user_id, 'show_welcome_panel', 1);
+            if (get_user_meta($user_id, 'show_welcome_panel',true) != 0) {
+                update_user_meta($user_id, 'show_welcome_panel', 1);   
+            }
         }
     }
 
